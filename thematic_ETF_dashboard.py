@@ -36,9 +36,15 @@ if file_path:
     summary_data = excel_data.parse('Summary')
     raw_data = excel_data.parse('RAW')
 
-    # 수익률 변환: 곱하기 100 및 % 단위 추가
-    raw_data["1년 수익률"] = pd.to_numeric(raw_data["1년 수익률"], errors="coerce") * 100
-    raw_data["1년 수익률(%)"] = raw_data["1년 수익률"].map("{:.2f}%".format)
+    # 1년 수익률 데이터 전처리
+    raw_data["1년 수익률"] = raw_data["1년 수익률"].astype(str)  # 문자열로 변환
+    raw_data["1년 수익률"] = raw_data["1년 수익률"].str.replace("%", "")  # '%' 제거
+    raw_data["1년 수익률"] = raw_data["1년 수익률"].str.replace(",", "")  # ',' 제거
+    raw_data["1년 수익률"] = pd.to_numeric(raw_data["1년 수익률"], errors="coerce")  # 숫자로 변환
+
+    # 변환 후 NaN 값을 확인하고 처리
+    st.write("1년 수익률 NaN 개수:", raw_data["1년 수익률"].isna().sum())
+    raw_data["1년 수익률"].fillna(0, inplace=True)  # NaN 값을 0으로 대체
 
     # Summary 데이터 시각화
     st.header("Summary Data Overview")
@@ -72,8 +78,8 @@ if file_path:
 
     # 수익률 순위 기능 추가
     st.subheader("ETF 수익률 순위")
-    sorted_data = raw_data[["티커", "ETF명", "1년 수익률(%)", "AUM", "테마"]].copy()
-    sorted_data = sorted_data.sort_values(by="1년 수익률(%)", ascending=False).reset_index(drop=True)
+    sorted_data = raw_data[["티커", "ETF명", "1년 수익률", "AUM", "테마"]].copy()
+    sorted_data = sorted_data.sort_values(by="1년 수익률", ascending=False).reset_index(drop=True)
 
     # 슬라이더로 순위 범위 선택
     rank_range = st.slider("수익률 순위 선택 (상위)", 1, len(sorted_data), (1, 10))
@@ -88,7 +94,7 @@ if file_path:
         x="1년 수익률:Q",
         y=alt.Y("ETF명:N", sort="-x"),
         color="테마:N",
-        tooltip=["티커", "ETF명", "1년 수익률(%)", "AUM"]
+        tooltip=["티커", "ETF명", "1년 수익률", "AUM"]
     ).properties(title="수익률 상위 ETF")
 
     st.altair_chart(rank_chart, use_container_width=True)
@@ -99,7 +105,7 @@ if file_path:
         x="AUM:Q",
         y="1년 수익률:Q",
         color="테마:N",
-        tooltip=["티커", "ETF명", "AUM", "1년 수익률(%)"]
+        tooltip=["티커", "ETF명", "AUM", "1년 수익률"]
     ).interactive()
 
     st.altair_chart(scatter_chart, use_container_width=True)
