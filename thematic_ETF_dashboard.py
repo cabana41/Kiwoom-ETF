@@ -37,6 +37,7 @@ if file_path:
     raw_data = excel_data.parse('RAW')
 
     # 1년 수익률 데이터 전처리
+    raw_data["1년 수익률"] = raw_data["1년 수익률"] * 100
     raw_data["1년 수익률"] = raw_data["1년 수익률"].astype(str)  # 문자열로 변환
     raw_data["1년 수익률"] = raw_data["1년 수익률"].str.replace("%", "")  # '%' 제거
     raw_data["1년 수익률"] = raw_data["1년 수익률"].str.replace(",", "")  # ',' 제거
