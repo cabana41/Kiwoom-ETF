@@ -35,25 +35,6 @@ aum_chart = alt.Chart(summary_cleaned).mark_bar().encode(
 
 st.altair_chart(aum_chart, use_container_width=True)
 
-# 국가별 AUM 지도로 시각화
-st.subheader("국가별 비중 (지도)")
-geo_data = summary_cleaned[["국가", "AUM"]].copy()
-geo_data["AUM"] = pd.to_numeric(geo_data["AUM"], errors="coerce")  # AUM 숫자형 변환
-geo_data = geo_data.groupby("국가").sum().reset_index()  # 국가별 AUM 합계
-
-# Plotly를 사용한 지도 시각화
-fig = px.choropleth(
-    geo_data,
-    locations="국가",  # 국가 이름
-    locationmode="country names",  # 국가 이름으로 매칭
-    color="AUM",  # 색상으로 표시할 데이터
-    hover_name="국가",  # 마우스 오버 시 표시할 데이터
-    title="국가별 AUM",
-    color_continuous_scale="Blues",
-)
-
-st.plotly_chart(fig, use_container_width=True)
-
 # RAW 데이터 탐색
 st.header("ETF 상세 정보 탐색")
 st.write("RAW 데이터는 각 ETF의 상세 정보를 포함합니다.")
