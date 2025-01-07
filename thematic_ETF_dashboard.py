@@ -3,7 +3,7 @@ import pandas as pd
 import altair as alt
 
 # 파일 읽기
-file_path = "C:/Users/이승기/Desktop/DATA/Thematic ETF_20250106.xlsx"  # 로컬 파일 경로
+file_path = "Thematic ETF_20250106.xlsx"  # 로컬 파일 경로
 excel_data = pd.ExcelFile(file_path)
 
 # 데이터 로드
