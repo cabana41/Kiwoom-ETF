@@ -4,6 +4,30 @@ import altair as alt
 import plotly.express as px
 import os
 
+# 기본 설정
+st.title("Thematic ETF Dashboard 📊")
+st.sidebar.header("Settings")
+
+# 날짜 선택 및 파일 경로 생성
+st.sidebar.subheader("날짜 선택")
+selected_date = st.sidebar.date_input("날짜를 선택하세요", pd.to_datetime("today"))
+
+# 선택된 날짜에 따라 파일 경로 설정
+file_name = f"Thematic ETF_{selected_date.strftime('%Y%m%d')}.xlsx"
+file_path = os.path.join(".", file_name)  # 파일이 동일 디렉토리에 있다고 가정
+
+st.sidebar.write(f"선택된 파일: `{file_name}`")
+
+# 파일 존재 여부 확인
+if not os.path.exists(file_path):
+    st.error(f"{file_name} 파일이 존재하지 않습니다. 업로드해주세요.")
+    uploaded_file = st.file_uploader("엑셀 파일을 업로드하세요", type=["xlsx"])
+    if uploaded_file:
+        file_path = uploaded_file
+        st.success("파일이 성공적으로 업로드되었습니다!")
+else:
+    st.success(f"{file_name} 파일이 존재합니다. 데이터를 로드합니다!")
+
 # 파일 읽기
 file_path = "Thematic ETF_20250106.xlsx"  # 로컬 파일 경로
 excel_data = pd.ExcelFile(file_path)
@@ -11,10 +35,6 @@ excel_data = pd.ExcelFile(file_path)
 # 데이터 로드
 summary_data = excel_data.parse('Summary')
 raw_data = excel_data.parse('RAW')
-
-# Streamlit 앱 시작
-st.title("Thematic ETF Dashboard 📊")
-st.sidebar.header("Settings")
 
 # Summary 데이터 시각화
 st.header("Summary Data Overview")
