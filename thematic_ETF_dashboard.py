@@ -103,6 +103,3 @@ if file_path:
     ).interactive()
 
     st.altair_chart(scatter_chart, use_container_width=True)
-).interactive()
-
-st.altair_chart(scatter_chart, use_container_width=True)
