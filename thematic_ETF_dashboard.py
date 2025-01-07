@@ -67,16 +67,6 @@ if file_path:
 
     st.altair_chart(aum_chart, use_container_width=True)
 
-    # RAW 데이터 탐색
-    st.header("테마형 ETF 상세 정보")
-    st.write("각 ETF별 상세 정보")
-
-    # ETF 필터링
-    theme_filter = st.sidebar.multiselect("테마 선택", raw_data["테마"].unique(), default=raw_data["테마"].unique())
-    filtered_data = raw_data[raw_data["테마"].isin(theme_filter)]
-
-    st.dataframe(filtered_data)
-
     # 수익률 순위 기능 추가
     st.subheader("테마형 ETF 1년 수익률 순위")
     sorted_data = raw_data[["티커", "ETF명", "1년 수익률", "AUM", "테마"]].copy()
@@ -99,6 +89,16 @@ if file_path:
     ).properties(title="1년 수익률 상위 ETF")
 
     st.altair_chart(rank_chart, use_container_width=True)
+
+    # RAW 데이터 탐색
+    st.header("테마형 ETF 상세 정보")
+    st.write("각 ETF별 상세 정보")
+
+    # ETF 필터링
+    theme_filter = st.sidebar.multiselect("테마 선택", raw_data["테마"].unique(), default=raw_data["테마"].unique())
+    filtered_data = raw_data[raw_data["테마"].isin(theme_filter)]
+
+    st.dataframe(filtered_data)
 
     # 수익률 vs AUM 시각화
     st.subheader("1년 수익률 vs AUM")
