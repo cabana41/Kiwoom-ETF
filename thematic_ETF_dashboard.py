@@ -73,7 +73,7 @@ if file_path:
     # 수익률 순위 기능 추가
     st.subheader("ETF 수익률 순위")
     sorted_data = raw_data[["티커", "ETF명", "1년 수익률(%)", "AUM", "테마"]].copy()
-    sorted_data = sorted_data.sort_values(by="1년 수익률", ascending=False).reset_index(drop=True)
+    sorted_data = sorted_data.sort_values(by="1년 수익률(%)", ascending=False).reset_index(drop=True)
 
     # 슬라이더로 순위 범위 선택
     rank_range = st.slider("수익률 순위 선택 (상위)", 1, len(sorted_data), (1, 10))
