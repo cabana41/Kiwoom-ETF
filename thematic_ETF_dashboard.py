@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import altair as alt
 import plotly.express as px
+import os
 
 # 파일 읽기
 file_path = "Thematic ETF_20250106.xlsx"  # 로컬 파일 경로
