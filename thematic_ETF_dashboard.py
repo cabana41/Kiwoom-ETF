@@ -90,6 +90,63 @@ if file_path:
 
     st.altair_chart(rank_chart, use_container_width=True)
 
+    # AUM 순유입 데이터 추가 처리
+    if "AUM 순유입" in raw_data.columns:
+        raw_data["AUM 순유입"] = pd.to_numeric(raw_data["AUM 순유입"], errors="coerce")
+    else:
+        st.warning("AUM 순유입 데이터가 RAW 데이터에 없습니다.")
+
+    # Summary 데이터 시각화
+    st.header("Summary Data Overview")
+    st.write("Summary 데이터는 테마별 시장 데이터를 보여줍니다.")
+
+    # 테마별 AUM 및 시장 점유율 시각화
+    st.subheader("테마별 AUM 및 순유입")
+    summary_cleaned = summary_data.iloc[1:]  # 헤더 정리
+    summary_cleaned.columns = summary_data.iloc[0]  # 첫 행을 컬럼으로 설정
+    summary_cleaned = summary_cleaned.dropna(subset=["테마"])  # NA 제거
+
+    # AUM 및 순유입 시각화
+    if "순유입" in summary_cleaned.columns:
+        summary_cleaned["순유입"] = pd.to_numeric(summary_cleaned["순유입"], errors="coerce")
+        inflow_chart = alt.Chart(summary_cleaned).mark_bar().encode(
+            x="테마:O",
+            y="순유입:Q",
+            color="국가:N",
+            tooltip=["테마", "국가", "순유입"]
+        ).properties(title="테마별 AUM 순유입")
+        st.altair_chart(inflow_chart, use_container_width=True)
+    else:
+        st.warning("Summary 데이터에 '순유입' 열이 없습니다.")
+
+    # RAW 데이터 탐색
+    st.header("ETF 상세 정보 탐색")
+    st.write("RAW 데이터는 각 ETF의 상세 정보를 포함합니다.")
+
+    # AUM 순유입 필터링
+    if "AUM 순유입" in raw_data.columns:
+        st.subheader("AUM 순유입 상위 ETF")
+        sorted_inflow_data = raw_data.sort_values(by="AUM 순유입", ascending=False).reset_index(drop=True)
+
+        # 슬라이더로 순위 범위 선택
+        inflow_rank_range = st.slider("AUM 순유입 순위 선택 (상위)", 1, len(sorted_inflow_data), (1, 10))
+        ranked_inflow_data = sorted_inflow_data.iloc[inflow_rank_range[0]-1:inflow_rank_range[1]]
+
+        # 순위 결과 표시
+        st.write(f"선택한 AUM 순유입 순위: {inflow_rank_range[0]}위 ~ {inflow_rank_range[1]}위")
+        st.dataframe(ranked_inflow_data)
+
+        # AUM 순유입 상위 ETF 시각화
+        inflow_chart = alt.Chart(ranked_inflow_data).mark_bar().encode(
+            x="AUM 순유입:Q",
+            y=alt.Y("ETF명:N", sort="-x"),
+            color="테마:N",
+            tooltip=["티커", "ETF명", "AUM 순유입", "테마"]
+        ).properties(title="AUM 순유입 상위 ETF")
+        st.altair_chart(inflow_chart, use_container_width=True)
+    else:
+        st.warning("RAW 데이터에 'AUM 순유입' 열이 없습니다.")
+
     # RAW 데이터 탐색
     st.header("테마형 ETF 상세 정보")
     st.write("각 ETF별 상세 정보")
