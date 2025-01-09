@@ -92,7 +92,7 @@ if file_path:
 
     # AUM 순유입 데이터 추가 처리
     if "AUM 순유입" in raw_data.columns:
-        raw_data["AUM 순유입"] = pd.to_numeric(raw_data["AUM 순유입"], errors="coerce")
+        raw_data["AUM fund flow"] = pd.to_numeric(raw_data["AUM fund flow"], errors="coerce")
     else:
         st.warning("AUM 순유입 데이터가 RAW 데이터에 없습니다.")
 
@@ -108,12 +108,12 @@ if file_path:
 
     # AUM 및 순유입 시각화
     if "순유입" in summary_cleaned.columns:
-        summary_cleaned["순유입"] = pd.to_numeric(summary_cleaned["순유입"], errors="coerce")
+        summary_cleaned["11월초 대비\nfund flow"] = pd.to_numeric(summary_cleaned["11월초 대비\nfund flow"], errors="coerce")
         inflow_chart = alt.Chart(summary_cleaned).mark_bar().encode(
             x="테마:O",
-            y="순유입:Q",
+            y="11월초 대비\nfund flow:Q",
             color="국가:N",
-            tooltip=["테마", "국가", "순유입"]
+            tooltip=["테마", "국가", "11월초 대비\nfund flow"]
         ).properties(title="테마별 AUM 순유입")
         st.altair_chart(inflow_chart, use_container_width=True)
     else:
@@ -126,7 +126,7 @@ if file_path:
     # AUM 순유입 필터링
     if "AUM 순유입" in raw_data.columns:
         st.subheader("AUM 순유입 상위 ETF")
-        sorted_inflow_data = raw_data.sort_values(by="AUM 순유입", ascending=False).reset_index(drop=True)
+        sorted_inflow_data = raw_data.sort_values(by="AUM fund flow", ascending=False).reset_index(drop=True)
 
         # 슬라이더로 순위 범위 선택
         inflow_rank_range = st.slider("AUM 순유입 순위 선택 (상위)", 1, len(sorted_inflow_data), (1, 10))
@@ -138,10 +138,10 @@ if file_path:
 
         # AUM 순유입 상위 ETF 시각화
         inflow_chart = alt.Chart(ranked_inflow_data).mark_bar().encode(
-            x="AUM 순유입:Q",
+            x="AUM fund flow:Q",
             y=alt.Y("ETF명:N", sort="-x"),
             color="테마:N",
-            tooltip=["티커", "ETF명", "AUM 순유입", "테마"]
+            tooltip=["티커", "ETF명", "AUM fund flow", "테마"]
         ).properties(title="AUM 순유입 상위 ETF")
         st.altair_chart(inflow_chart, use_container_width=True)
     else:
