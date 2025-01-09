@@ -53,7 +53,7 @@ if file_path:
 
     # 테마별 AUM 및 시장 점유율 시각화
     st.subheader("전체 테마별 AUM 및 시장 점유율")
-    summary_cleaned = summary_data.iloc[1:]  # 헤더 정리
+    summary_cleaned = summary_data.iloc[1:-2]  # 헤더 정리
     summary_cleaned.columns = summary_data.iloc[0]  # 첫 행을 컬럼으로 설정
     summary_cleaned = summary_cleaned.dropna(subset=["테마"])  # NA 제거
 
